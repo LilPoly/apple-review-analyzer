@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:16
+    container_name: apple_review_db
+    environment:
+      POSTGRES_USER: apple_review_user
+      POSTGRES_PASSWORD: apple_review_pass
+      POSTGRES_DB: reviews_db
+    ports:
+      - "5444:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U apple_review_user -d reviews_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: apple_review_redis
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    container_name: apple_review_web
+    env_file: .env
+    environment:
+      DB_URL: postgresql+psycopg://apple_review_user:apple_review_pass@db:5432/reviews_db
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./app:/app/app
+      - ./models_store:/app/models_store
+    command: ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+volumes:
+  pg_data:
