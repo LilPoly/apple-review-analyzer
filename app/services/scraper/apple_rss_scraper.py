@@ -4,6 +4,7 @@ import httpx
 import pandas as pd
 
 from app.core.config.settings import settings
+from app.core.constants import MAX_PAGES_PER_SORT, REVIEWS_PER_PAGE, SORT_MODES
 from app.core.exceptions import AppNotFoundError, ScraperError
 from app.core.logger import get_logger
 from app.schemas.scraper import RawReviewDTO
@@ -13,10 +14,6 @@ from app.utils.text_preprocessing import clean_text, is_meaningful_text
 __all__ = ["AppleRSSScraper"]
 
 logger = get_logger(__name__)
-
-_SORT_MODES = ("mostrecent", "mosthelpful")
-_REVIEWS_PER_PAGE = 50
-_MAX_PAGES_PER_SORT = 5
 
 
 class AppleRSSScraper(ScraperService, ReviewPoolFetcher):
@@ -72,10 +69,10 @@ class AppleRSSScraper(ScraperService, ReviewPoolFetcher):
     async def _collect_from_all_sorts(
         self, app_id: str, country: str, count: int
     ) -> list[dict]:
-        pages_needed = min(_MAX_PAGES_PER_SORT, (count // _REVIEWS_PER_PAGE) + 2)
+        pages_needed = min(MAX_PAGES_PER_SORT, (count // REVIEWS_PER_PAGE) + 2)
         tasks = [
             self._fetch_page(app_id, country, sort_mode, page)
-            for sort_mode in _SORT_MODES
+            for sort_mode in SORT_MODES
             for page in range(1, pages_needed + 1)
         ]
         pages_results = await self._gather_safely(tasks)

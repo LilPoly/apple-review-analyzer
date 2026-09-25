@@ -19,3 +19,7 @@ class InvalidAppUrlError(Exception):
 
 class ScraperError(Exception):
     """Raised for generic failures during review collection (network, parsing, etc.)."""
+
+
+class BaselineMetricsReadError(Exception):
+    """Raised when the baseline metrics report file is missing or invalid."""

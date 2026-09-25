@@ -13,6 +13,7 @@ __all__ = [
 
 
 class AnalysisMethod(StrEnum):
+    VADER = "vader"
     CLASSICAL = "classical"
     BERT = "bert"
 
@@ -39,4 +40,4 @@ class AnalysisResultDTO(BaseModel):
     negative_keywords: list[str]
     predictions: list[SentimentPredictionDTO]
     execution_time_seconds: float | None
-    created_at: datetime
+    created_at: datetime | None = None

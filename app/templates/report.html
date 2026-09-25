@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Review Analysis Report — {{ app_id }}</title>
+<style>
+  @page { size: A4; margin: 2cm; }
+  body { font-family: "Helvetica Neue", Arial, sans-serif; color: #222; font-size: 11pt; }
+  h1 { font-size: 20pt; margin-bottom: 0; }
+  .meta { color: #666; font-size: 9pt; margin-bottom: 24px; }
+  .overview { display: flex; gap: 24px; margin-bottom: 16px; }
+  .stat-box { border: 1px solid #ddd; border-radius: 6px; padding: 12px 16px; }
+  .stat-box .value { font-size: 18pt; font-weight: bold; }
+  .stat-box .label { font-size: 9pt; color: #666; }
+  .method-section { page-break-inside: avoid; margin-top: 28px; border-top: 2px solid #eee; padding-top: 16px; }
+  .method-title { text-transform: uppercase; font-size: 13pt; color: #4C72B0; }
+  img.chart { width: 100%; max-width: 420px; }
+  ul.keywords { list-style: none; padding: 0; }
+  ul.keywords li { display: inline-block; background: #eef1f7; border-radius: 12px; padding: 3px 10px; margin: 2px; font-size: 9.5pt; }
+</style>
+</head>
+<body>
+  <h1>App Review Analysis Report</h1>
+  <div class="meta">App ID: {{ app_id }} · Country: {{ country }} · Job: {{ job_id }} · Generated: {{ generated_at }}</div>
+
+  <div class="overview">
+    <div class="stat-box"><div class="value">{{ total_reviews }}</div><div class="label">Reviews analyzed</div></div>
+    <div class="stat-box"><div class="value">{{ avg_rating }} / 5</div><div class="label">Average rating</div></div>
+  </div>
+
+  <img class="chart" src="{{ rating_chart }}" alt="Rating distribution">
+
+  {% for section in method_sections %}
+  <div class="method-section">
+    <div class="method-title">{{ section.method }}</div>
+    <img class="chart" src="{{ section.sentiment_chart }}" alt="Sentiment — {{ section.method }}">
+    <p><strong>Top negative keywords</strong></p>
+    <ul class="keywords">
+      {% for kw in section.negative_keywords %}<li>{{ kw }}</li>{% endfor %}
+    </ul>
+    <p><strong>Insights</strong></p>
+    <ul>
+      {% for insight in section.insights %}<li>{{ insight }}</li>{% endfor %}
+    </ul>
+    <p class="meta">Execution time: {{ section.execution_time }}s</p>
+  </div>
+  {% endfor %}
+</body>
+</html>

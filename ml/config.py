@@ -46,3 +46,5 @@ BERT_MODEL_NAME = "distilbert-base-uncased"
 BERT_MAX_LENGTH = 128
 BERT_BATCH_SIZE = 16
 BERT_EPOCHS = 2
+
+BASELINE_METRICS_PATH = _ML_ROOT / "artifacts" / "baseline_metrics.json"

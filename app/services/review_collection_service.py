@@ -43,7 +43,7 @@ class ReviewCollectionService:
 
         with self._uow as uow:
             uow.jobs.add(job)
-            uow.session.flush()  # generates job.id before attaching reviews
+            uow.session.flush()
 
             for review in reviews:
                 review.job_id = job.id
