@@ -34,6 +34,7 @@ services:
     environment:
       DB_URL: postgresql+psycopg://apple_review_user:apple_review_pass@db:5432/reviews_db
       REDIS_URL: redis://redis:6379/0
+      RELOAD: "true"
     ports:
       - "8000:8000"
     depends_on:
@@ -43,9 +44,6 @@ services:
         condition: service_healthy
     volumes:
       - ./app:/app/app
-      - ./models_store:/app/models_store
-      - ./ml/artifacts:/app/ml/artifacts
-    command: ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
 volumes:
   pg_data:
